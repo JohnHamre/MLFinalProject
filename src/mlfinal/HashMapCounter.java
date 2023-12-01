@@ -148,6 +148,7 @@ public class HashMapCounter<K>{  // implements Map<K, Integer>{
 	private class ChangeableInteger{
 		private int num;
 		
+		@SuppressWarnings("unused")
 		public ChangeableInteger(){
 			num = 0;
 		}
@@ -164,10 +165,12 @@ public class HashMapCounter<K>{  // implements Map<K, Integer>{
 			return num;
 		}
 		
+		@SuppressWarnings("unused")
 		public void setInt(int num){
 			this.num = num;
 		}
 		
+		@SuppressWarnings("unused")
 		public int compareTo(ChangeableInteger o){
 			if( num < o.num ){
 				return -1;
@@ -178,6 +181,7 @@ public class HashMapCounter<K>{  // implements Map<K, Integer>{
 			}
 		}
 		
+		@SuppressWarnings("unchecked")
 		public boolean equals(Object o){
 			return num == ((ChangeableInteger)o).num;
 		}
