@@ -28,4 +28,12 @@ public class Card{
     public short getSuit() {
         return suit;
     }
+    
+    public int toID() {
+    	return this.suit * 13 + this.rank;
+    }
+    
+    public static Card fromID(int id) {
+    	return new Card((short) ((float)id / 13.0), (short) (id % 13));
+    }
 }
