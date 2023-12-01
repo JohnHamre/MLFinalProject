@@ -55,6 +55,7 @@ public class CrossValidationSet {
 	 * @param splitNum the split number requested
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public DataSetSplit getValidationSet(int splitNum){
 		if( splitNum >= numSplits || splitNum < 0){
 			return null;
