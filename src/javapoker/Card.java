@@ -10,7 +10,7 @@ public class Card{
         return ranks[__rank];
     }
 
-    Card(short suit, short rank)
+    public Card(short suit, short rank)
     {
         this.rank=rank;
         this.suit=suit;

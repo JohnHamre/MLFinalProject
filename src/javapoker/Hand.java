@@ -30,22 +30,14 @@ public class Hand {
         }
 
         // updated the flush checker to account for 7 card hand rather than 5 card hand
-        HashMap<Integer, Integer> numPerSuit = new HashMap<>();
-        
-        for (int i = 0; i < 4; i++) {
-        	numPerSuit.put(i, 0);
-        }
+        int[] numPerSuit = {0, 0, 0, 0};
 
         for (int i=0; i<7; i++) {
-//        	System.out.println(passedCards[i].getSuit());
-//        	System.out.println(numPerSuit.get((int)passedCards[i].getSuit()));
-//            System.out.println(numPerSuit.get(3));
-        	numPerSuit.put(numPerSuit.get((int)passedCards[i].getSuit()), numPerSuit.get((int)passedCards[i].getSuit()) + 1);
+        	numPerSuit[(int)passedCards[i].getSuit()]++;
         }
-        
-        for (int suit : numPerSuit.keySet()) {
-            if (numPerSuit.get(suit) >= 5) flush = true;
-        }
+
+        for (int i = 0; i < 4; i++)
+            if (numPerSuit[i] >= 5) flush = true;
 
         // this function should still work with the 7 card hand
         // checks whether we have a pair or two pair
@@ -155,7 +147,7 @@ public class Hand {
         if (straight && !flush)
         {
             value[0]=5;
-            //value[1]=;
+            value[1]=topStraightValue;
         }
 
         if (flush && !straight)
@@ -185,7 +177,7 @@ public class Hand {
         if (straight && flush)
         {
             value[0]=9;
-            //value[1]=;
+            value[1]=topStraightValue;
         }
 
     }
@@ -250,4 +242,243 @@ public class Hand {
         }
         return 1;
     }
+
+    private static void runTest(Card[] playerHand, Card[] board, Card[] opponentHand) {
+        Card[] playerBoard = new Card[7];
+		Card[] opponentBoard = new Card[7];
+		for(int i = 0; i <= 1; i++) {
+			playerBoard[i] = playerHand[i];
+			opponentBoard[i] = opponentHand[i];
+		}
+		for(int i = 0; i <= 4; i++) {
+			playerBoard[i + 2] = board[i];
+			opponentBoard[i + 2] = board[i];
+		}
+		
+		// Compare the two hands to determine the winner.
+		double playerWon = (new Hand(playerBoard)).compareTo(new Hand(opponentBoard));
+		
+		
+        // Test passes if playerHand is the stronger hand
+		if (playerWon > 0) {
+            System.out.println("Test passed!");
+        }
+        else {
+            System.out.println("Test failed!");
+            // Print the board states if test fails
+            for(Card c : playerBoard) {
+			    System.out.println(Card.ranks[(int) c.getRank()] + " of " + Card.suits[(int) c.getSuit()] );
+            }
+            System.out.println("----------------");
+            for(Card c : opponentBoard) {
+                System.out.println(Card.ranks[(int) c.getRank()] + " of " + Card.suits[(int) c.getSuit()] );
+            }
+            System.out.println();
+        }
+        System.out.println("---------------- ----------------");
+    }
+
+    // Set of tests to run. In each test, playerHand should be the winning hand.
+
+    private static void highCardTest(Card[] playerHand, Card[] board, Card[] opponentHand) {
+        System.out.println("Testing high card");
+
+        // Initialize cards for flush test
+        board[0] = new Card((short)2, (short)1);
+        board[1] = new Card((short)3, (short)3);
+        board[2] = new Card((short)0, (short)5);
+        board[3] = new Card((short)1, (short)7);
+        board[4] = new Card((short)2, (short)9);
+
+        playerHand[0] = new Card((short)0, (short)8);
+        playerHand[1] = new Card((short)0, (short)12);
+
+        opponentHand[0] = new Card((short)3, (short)12);
+        opponentHand[1] = new Card((short)2, (short)6);
+
+        runTest(playerHand, board, opponentHand);
+
+    }
+
+    private static void pairTest(Card[] playerHand, Card[] board, Card[] opponentHand) {
+        System.out.println("Testing pairs");
+
+        // Initialize cards for flush test
+        board[0] = new Card((short)0, (short)1);
+        board[1] = new Card((short)1, (short)3);
+        board[2] = new Card((short)2, (short)5);
+        board[3] = new Card((short)3, (short)7);
+        board[4] = new Card((short)0, (short)9);
+
+        playerHand[0] = new Card((short)0, (short)8);
+        playerHand[1] = new Card((short)0, (short)9);
+
+        opponentHand[0] = new Card((short)3, (short)12);
+        opponentHand[1] = new Card((short)2, (short)11);
+
+        runTest(playerHand, board, opponentHand);
+
+    }
+
+    private static void twoPairTest(Card[] playerHand, Card[] board, Card[] opponentHand) {
+        System.out.println("Testing two pairs");
+
+        // Initialize cards for flush test
+        board[0] = new Card((short)0, (short)1);
+        board[1] = new Card((short)1, (short)3);
+        board[2] = new Card((short)2, (short)5);
+        board[3] = new Card((short)3, (short)7);
+        board[4] = new Card((short)0, (short)9);
+
+        playerHand[0] = new Card((short)3, (short)7);
+        playerHand[1] = new Card((short)3, (short)5);
+
+        opponentHand[0] = new Card((short)0, (short)2);
+        opponentHand[1] = new Card((short)1, (short)9);
+
+        runTest(playerHand, board, opponentHand);
+
+    }
+
+    private static void tripTest(Card[] playerHand, Card[] board, Card[] opponentHand) {
+        System.out.println("Testing trips");
+
+        // Initialize cards for flush test
+        board[0] = new Card((short)0, (short)1);
+        board[1] = new Card((short)1, (short)3);
+        board[2] = new Card((short)2, (short)5);
+        board[3] = new Card((short)3, (short)7);
+        board[4] = new Card((short)0, (short)9);
+
+        playerHand[0] = new Card((short)0, (short)3);
+        playerHand[1] = new Card((short)3, (short)3);
+
+        opponentHand[0] = new Card((short)3, (short)9);
+        opponentHand[1] = new Card((short)2, (short)7);
+
+        runTest(playerHand, board, opponentHand);
+
+    }
+
+    private static void straightTest(Card[] playerHand, Card[] board, Card[] opponentHand) {
+        System.out.println("Testing straights");
+
+        // Initialize cards for flush test
+        board[0] = new Card((short)0, (short)1);
+        board[1] = new Card((short)1, (short)3);
+        board[2] = new Card((short)2, (short)5);
+        board[3] = new Card((short)3, (short)7);
+        board[4] = new Card((short)0, (short)9);
+
+        playerHand[0] = new Card((short)0, (short)4);
+        playerHand[1] = new Card((short)0, (short)6);
+
+        opponentHand[0] = new Card((short)3, (short)9);
+        opponentHand[1] = new Card((short)2, (short)9);
+
+        runTest(playerHand, board, opponentHand);
+
+    }
+
+    private static void flushTest(Card[] playerHand, Card[] board, Card[] opponentHand) {
+        System.out.println("Testing flush");
+
+        // Initialize cards for flush test
+        board[0] = new Card((short)0, (short)1);
+        board[1] = new Card((short)0, (short)3);
+        board[2] = new Card((short)0, (short)5);
+        board[3] = new Card((short)1, (short)7);
+        board[4] = new Card((short)2, (short)9);
+
+        playerHand[0] = new Card((short)0, (short)2);
+        playerHand[1] = new Card((short)0, (short)10);
+
+        opponentHand[0] = new Card((short)3, (short)4);
+        opponentHand[1] = new Card((short)2, (short)6);
+
+        runTest(playerHand, board, opponentHand);
+
+    }
+
+    private static void houseTest(Card[] playerHand, Card[] board, Card[] opponentHand) {
+        System.out.println("Testing full house");
+
+        // Initialize cards for flush test
+        board[0] = new Card((short)0, (short)1);
+        board[1] = new Card((short)0, (short)3);
+        board[2] = new Card((short)0, (short)5);
+        board[3] = new Card((short)1, (short)5);
+        board[4] = new Card((short)2, (short)7);
+
+        playerHand[0] = new Card((short)3, (short)5);
+        playerHand[1] = new Card((short)2, (short)3);
+
+        opponentHand[0] = new Card((short)0, (short)2);
+        opponentHand[1] = new Card((short)0, (short)10);
+
+        runTest(playerHand, board, opponentHand);
+
+    }
+
+
+    private static void quadTest(Card[] playerHand, Card[] board, Card[] opponentHand) {
+        System.out.println("Testing quads");
+
+        // Initialize cards for flush test
+        board[0] = new Card((short)0, (short)1);
+        board[1] = new Card((short)1, (short)1);
+        board[2] = new Card((short)2, (short)3);
+        board[3] = new Card((short)3, (short)3);
+        board[4] = new Card((short)2, (short)5);
+
+        playerHand[0] = new Card((short)2, (short)1);
+        playerHand[1] = new Card((short)3, (short)1);
+
+        opponentHand[0] = new Card((short)3, (short)5);
+        opponentHand[1] = new Card((short)2, (short)12);
+
+        runTest(playerHand, board, opponentHand);
+
+    }
+
+    private static void straightFlushTest(Card[] playerHand, Card[] board, Card[] opponentHand) {
+        System.out.println("Testing straight flush");
+
+        // Initialize cards for flush test
+        board[0] = new Card((short)0, (short)1);
+        board[1] = new Card((short)1, (short)1);
+        board[2] = new Card((short)3, (short)6);
+        board[3] = new Card((short)3, (short)7);
+        board[4] = new Card((short)3, (short)8);
+
+        playerHand[0] = new Card((short)3, (short)9);
+        playerHand[1] = new Card((short)3, (short)10);
+
+        opponentHand[0] = new Card((short)2, (short)1);
+        opponentHand[1] = new Card((short)3, (short)1);
+
+        runTest(playerHand, board, opponentHand);
+
+    }
+
+    
+
+    public static void main(String args[]) {
+		// Create the hands to draw into, including the board
+		Card[] playerHand = new Card[2];
+		Card[] board = new Card[5];
+		Card[] opponentHand = new Card[2];
+
+        highCardTest(playerHand, board, opponentHand);
+        pairTest(playerHand, board, opponentHand);
+        twoPairTest(playerHand, board, opponentHand);
+        tripTest(playerHand, board, opponentHand);
+        straightTest(playerHand, board, opponentHand);
+        flushTest(playerHand, board, opponentHand);
+        houseTest(playerHand, board, opponentHand);
+        quadTest(playerHand, board, opponentHand);
+        straightFlushTest(playerHand, board, opponentHand);
+
+        
+	}
 }
