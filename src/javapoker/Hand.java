@@ -1,14 +1,18 @@
 package javapoker;
+
+import java.util.HashMap;
+
 public class Hand {
     private Card[] cards;
     private int[] value;
 
-    Hand(Card[] passedCards)
+    public Hand(Card[] passedCards)
     {
+    	value = new int[6];
 
         int[] ranks = new int[14];
         //miscellaneous cards that are not otherwise significant
-        int[] orderedRanks = new int[5];
+        int[] orderedRanks = new int[7]; // fixed to length 7
         boolean flush=false, straight=false;
         int sameCards=1,sameCards2=1;
         int largeGroupRank=0,smallGroupRank=0;
@@ -20,24 +24,27 @@ public class Hand {
         {
             ranks[i]=0;
         }
-        for (int i=0; i<=7; i++)
+        for (int i=0; i<7; i++)
         {
-            ranks[ cards[i].getRank() ]++;
+            ranks[ passedCards[i].getRank() ]++;
         }
 
         // updated the flush checker to account for 7 card hand rather than 5 card hand
-        HashMap<String, Integer> numPerSuit = new HashMap<>();
-        numPerSuit.put("hearts", 0);
-        numPerSuit.put("spades", 0);
-        numPerSuit.put("clubs", 0);
-        numPerSuit.put("diamonds", 0);
+        HashMap<Integer, Integer> numPerSuit = new HashMap<>();
+        
+        for (int i = 0; i < 4; i++) {
+        	numPerSuit.put(i, 0);
+        }
 
         for (int i=0; i<7; i++) {
-            numPerSuit.put(numPerSuit.getSuit(), get(passedCards[i] + 1));
+//        	System.out.println(passedCards[i].getSuit());
+//        	System.out.println(numPerSuit.get((int)passedCards[i].getSuit()));
+//            System.out.println(numPerSuit.get(3));
+        	numPerSuit.put(numPerSuit.get((int)passedCards[i].getSuit()), numPerSuit.get((int)passedCards[i].getSuit()) + 1);
         }
         
-        for (String suit : numPerSuit.keySet()) {
-            if (numPerSuit.getSuit >= 5) flush = true;
+        for (int suit : numPerSuit.keySet()) {
+            if (numPerSuit.get(suit) >= 5) flush = true;
         }
 
         // this function should still work with the 7 card hand
@@ -236,10 +243,11 @@ public class Hand {
     {
         for (int x=0; x<6; x++)
         {
-            if (this.value[x]>=that.value[x])
+            if (this.value[x]>that.value[x])
                 return 1;
             else if (this.value[x]<that.value[x])
                 return -1;
         }
+        return 1;
     }
 }

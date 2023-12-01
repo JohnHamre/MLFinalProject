@@ -37,7 +37,17 @@ public class Main {
 		}
 		
 		// Compare the two hands to determine the winner.
-		//double playerWon = (new Hand(playerBoard)).compareTo(new Hand(opponentBoard));
+		double playerWon = (new Hand(playerBoard)).compareTo(new Hand(opponentBoard));
+		for(Card c : playerBoard) {
+			System.out.println(Card.ranks[(int) c.getRank()] + " of " + Card.suits[(int) c.getSuit()] );
+		}
+		System.out.println("----------------");
+		for(Card c : opponentBoard) {
+			System.out.println(Card.ranks[(int) c.getRank()] + " of " + Card.suits[(int) c.getSuit()] );
+		}
+		System.out.println();
+		System.out.println(opponentBoard.toString());
+		System.out.println(playerWon);
 		// Set values
 		// Create a one-hot array.
 		double[] onehot_array = new double[104];
