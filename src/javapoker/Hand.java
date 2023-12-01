@@ -6,7 +6,7 @@ public class Hand {
     private Card[] cards;
     private int[] value;
 
-    public Hand(Card[] passedCards)
+public Hand(Card[] passedCards)
     {
     	value = new int[6];
 
