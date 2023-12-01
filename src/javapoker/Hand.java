@@ -3,7 +3,7 @@ public class Hand {
     private Card[] cards;
     private int[] value;
 
-    Hand(Deck d)
+    public Hand(Deck d)
     {
         value = new int[6];
         cards = new Card[5];
