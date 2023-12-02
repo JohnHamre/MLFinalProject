@@ -1,5 +1,8 @@
 package datagen;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 
 import javapoker.Card;
@@ -45,6 +48,35 @@ public class DatasetGenerator {
 	 */
 	public void generateNewDataset(int numEntries, String filepath) {
 		DataSet outputSet = generateNewDataset(numEntries);
+		// Create a file, then populate it.
+	    try 
+	    {
+	    	File myObj = new File(filepath);
+	        if (myObj.createNewFile()) {
+	        	try {
+	                FileWriter myWriter = new FileWriter(filepath);
+	                for(Example e : outputSet.getData())
+	                {
+	                	String writeStr = "";
+	                	for(int i = 0; i < e.getFeatureSet().size(); i++) {
+	                		writeStr += e.getFeature(i) + ", ";
+	                	}
+	                	writeStr += e.getLabel() + "\n";
+	                	myWriter.write(writeStr);
+	                }
+	                
+	                myWriter.close();
+	              } catch (IOException e) {
+	                System.out.println("An error occurred.");
+	                e.printStackTrace();
+	              }
+	        } else {
+	        	System.out.println("File already exists.");
+	        }
+	    } catch (IOException e) {
+	        	System.out.println("An error occurred.");
+	        	e.printStackTrace();
+	    }
 	}
 	
 	/**
