@@ -12,9 +12,10 @@ public class DatasetGenerator {
 	
 	private static int numFeatures = 104;
 	
-	public DatasetGenerator() {
-		
-	}
+	/**
+	 * Empty constructor. OOP architecture
+	 */
+	public DatasetGenerator() {}
 	
 	/**
 	 * Generate a new DataSet with numEntries distinct entries
