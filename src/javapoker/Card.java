@@ -36,4 +36,8 @@ public class Card{
     public static Card fromID(int id) {
     	return new Card((short) ((float)id / 13.0), (short) (id % 13));
     }
+    
+    public static String nameFromID(int id) {
+    	return suits[(short) ((float)id / 13.0)] + " of " + ranks[id % 13];
+    }
 }
