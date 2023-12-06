@@ -145,7 +145,7 @@ public class ThreeLayerNN implements Classifier {
         HashMap<Integer, ArrayList<Double>> w3 = new HashMap<>();
 
         double W1dotH = 0.0;
-        for (Integer i : layer_2_weights.keySet()) {
+        for (int i = 0; i < hiddenNodes2; i++) {
             // each layer_2_weights array list only has 1 value (at index 0)
             W1dotH += layer_2_weights.get(i).get(0) * hiddenNodeOutputs2.get(i);
         }
@@ -154,13 +154,13 @@ public class ThreeLayerNN implements Classifier {
         W1dotH += hiddenNodeBias2;
 
         // compute f(v · h)
-        Double f1 = Math.tanh(W1dotH);
+        double f1 = Math.tanh(W1dotH);
 
         // Compute delta for output layer
         double deltaOut = (example.getLabel() - f1) * (1 - Math.pow(f1, 2));
 
         // Update weights and biases for layer 3 (output layer)
-        for (Integer k : layer_3_weights.keySet()) {
+        for (int k : layer_3_weights.keySet()) {
             ArrayList<Double> weights = layer_3_weights.get(k);
             Double updatedWeight = weights.get(0);
 
@@ -168,29 +168,29 @@ public class ThreeLayerNN implements Classifier {
             ArrayList<Double> newWeights = new ArrayList<>();
             newWeights.add(updatedWeight);
 
-            w1.put(k, newWeights);
+            w3.put(k, newWeights);
         }
         hiddenNodeBias2 += eta * deltaOut;
 
         // Compute slope of the activations for layer 2
         HashMap<Integer, Double> hiddenNodeActivationSlopes2 = new HashMap<>();
         for (int k = 0; k < hiddenNodes2; k++) {
-            Double W2dotX = 0.0;
-            for (Integer j : layer_2_weights.keySet()) {
+            double W2dotX = 0.0;
+            for (int j : layer_2_weights.keySet()) {
                 W2dotX += layer_2_weights.get(j).get(k) * hiddenNodeOutputs1.get(j);
             }
 
             W2dotX += hiddenNodeBias1;
 
-            Double activationSlope2 = 1 - Math.pow(Math.tanh(W2dotX), 2);
+            double activationSlope2 = 1 - Math.pow(Math.tanh(W2dotX), 2);
             hiddenNodeActivationSlopes2.put(k, activationSlope2);
         }
 
         // Update weights and biases for layer 2
         for (int k = 0; k < hiddenNodes2; k++) {
             ArrayList<Double> updatedWeights = new ArrayList<>();
-            for (Integer j : layer_2_weights.keySet()) {
-                Double updatedWeight = layer_2_weights.get(j).get(k);
+            for (int j : layer_2_weights.keySet()) {
+                double updatedWeight = layer_2_weights.get(j).get(k);
                 updatedWeight += eta * hiddenNodeOutputs1.get(j) * hiddenNodeActivationSlopes2.get(k) * deltaOut;
                 updatedWeights.add(updatedWeight);
             }
@@ -202,8 +202,8 @@ public class ThreeLayerNN implements Classifier {
         // Compute slope of the activations for layer 1
         HashMap<Integer, Double> hiddenNodeActivationSlopes1 = new HashMap<>();
         for (int k = 0; k < hiddenNodes1; k++) {
-            Double W1dotX = 0.0;
-            for (Integer j : layer_1_weights.keySet()) {
+            double W1dotX = 0.0;
+            for (int j : layer_1_weights.keySet()) {
                 W1dotX += layer_1_weights.get(j).get(k) * example.getFeature(j);
             }
 
@@ -216,18 +216,30 @@ public class ThreeLayerNN implements Classifier {
         // Update weights and biases for layer 1
         for (int k = 0; k < hiddenNodes1; k++) {
             ArrayList<Double> updatedWeights = new ArrayList<>();
-            for (Integer j : layer_1_weights.keySet()) {
-                Double updatedWeight = layer_1_weights.get(j).get(k);
-                updatedWeight += eta * example.getFeature(j) * hiddenNodeActivationSlopes1.get(k) * hiddenNodeActivationSlopes2.get(k) * deltaOut;
-                updatedWeights.add(updatedWeight);
+            for (int j : layer_1_weights.keySet()) {
+                Double activationSlope1 = hiddenNodeActivationSlopes1.get(k);
+                Double activationSlope2 = hiddenNodeActivationSlopes2.get(k);
+                if (activationSlope1 != null && activationSlope2 != null) {
+                    double updatedWeight = layer_1_weights.get(j).get(k);
+                    updatedWeight += eta * example.getFeature(j) * activationSlope1 * activationSlope2 * deltaOut;
+                    updatedWeights.add(updatedWeight);
+                } else {
+                    updatedWeights.add(0.0);
+                }
             }
             w1.put(k, updatedWeights);
 
-            inputBias.set(k, inputBias.get(k) + eta * hiddenNodeActivationSlopes1.get(k) * hiddenNodeActivationSlopes2.get(k) * deltaOut);
+            Double activationSlope1 = hiddenNodeActivationSlopes1.get(k);
+            Double activationSlope2 = hiddenNodeActivationSlopes2.get(k);
+            if (activationSlope1 != null && activationSlope2 != null) {
+                inputBias.set(k, inputBias.get(k) + eta * activationSlope1 * activationSlope2 * deltaOut);
+            } else {
+                inputBias.set(k,0.0);
+            }
         }
 
         // Rearranging Layer 1 weights
-        for (Integer i : layer_1_weights.keySet()) {
+        for (int i : layer_1_weights.keySet()) {
             ArrayList<Double> inner = new ArrayList<>();
             for (int k = 0; k < hiddenNodes1; k++) {
                 inner.add(w1.get(k).get(i));

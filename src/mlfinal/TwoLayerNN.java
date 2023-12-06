@@ -88,7 +88,7 @@ public class TwoLayerNN implements Classifier {
 	@Override
 	public double confidence(Example example) {
 		// TODO Auto-generated method stub
-		return 0;
+		return Math.abs(predict(example));
 	}
 
 	private double predict(Example example) {
